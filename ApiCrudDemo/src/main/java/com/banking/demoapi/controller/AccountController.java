@@ -55,11 +55,21 @@ public class AccountController {
 	{
 		boolean status = false;
 	   try {
+		   try {
 		
-		   status = moneyTransferService.processTransaction(transferRequest);
+		       status = moneyTransferService.processTransaction(transferRequest);
+		       String msg = "";
+			   if(status)
+			     msg = "transaction successful : response " + status;
+			   return  new ResponseEntity<String>(msg,HttpStatus.OK);
+		   }
+		   catch(Exception e)
+		   {
+			   String msg = "transaction unsuccessful : response " + status + " : "+ e.getMessage();
+				return  new ResponseEntity<String>(msg,HttpStatus.EXPECTATION_FAILED);
+		   }
 		   
-		   String msg = "transaction successful : response " + status;
-			return  new ResponseEntity<String>(msg,HttpStatus.OK);
+			  
 	   }
 	   catch(Exception e){
 		   

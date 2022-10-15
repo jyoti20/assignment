@@ -31,7 +31,7 @@ public class MoneyTransferService {
 		
 		
 		TransferEntity transferEntity = transferService.createTransfer(transferRequest.getFromAccount(), 
-				transferRequest.getToAccount(), transferRequest.getTransactionAmount());
+				transferRequest.getToAccount(), transferRequest.getTransactionAmount(), transferRequest.getTransferRequestId());
 		
 		
 		doTransfer(fromAccount,toAccount, transferRequest.getTransactionAmount());
@@ -50,9 +50,9 @@ public class MoneyTransferService {
 		
 	  try
 	  {
-		  fromAccount = accountService.updateBalance(toAccount, toAccount.getCurrentBalance().add(transactionAmount));
+		  toAccount = accountService.updateBalance(toAccount, toAccount.getCurrentBalance().add(transactionAmount));
 		
-		  toAccount = accountService.updateBalance(fromAccount, fromAccount.getCurrentBalance().subtract(transactionAmount));
+		  fromAccount = accountService.updateBalance(fromAccount, fromAccount.getCurrentBalance().subtract(transactionAmount));
 	   }
 	  catch(Exception e)
 	  {
