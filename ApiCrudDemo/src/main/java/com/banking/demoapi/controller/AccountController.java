@@ -1,12 +1,10 @@
 package com.banking.demoapi.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +16,6 @@ import com.banking.demoapi.model.TransferRequest;
 import com.banking.demoapi.repository.AccountRepository;
 import com.banking.demoapi.service.AccountService;
 import com.banking.demoapi.service.MoneyTransferService;
-import com.banking.demoapi.validationexception.NegativeBalanceException;
-import com.banking.demoapi.validationexception.NotEnoughBalanceException;
 
 @RestController
 public class AccountController {
@@ -66,9 +62,7 @@ public class AccountController {
 		boolean status = false;
 	   try {
 		   try {
-		
-			   Account fromAccount = accService.getAccountStatement(transferRequest.getFromAccount());
-			   validateAccountBalance(fromAccount,transferRequest.getTransactionAmount());
+			   
 		       status = moneyTransferService.processTransaction(transferRequest);
 		       String msg = "";
 			   if(status)
@@ -130,13 +124,7 @@ public class AccountController {
 		
 	}
 	
-	private void validateAccountBalance(Account fromAccount, BigDecimal transactionAmount) throws NotEnoughBalanceException, NegativeBalanceException {
-		if(fromAccount.getCurrentBalance().compareTo(transactionAmount) < 0)
-		 throw new NotEnoughBalanceException("Not Enough Balance in account to Transfer ");
-		
-		if (transactionAmount.compareTo(BigDecimal.ZERO) > 0)
-			 throw new NegativeBalanceException("Not Enough Balance in account to Transfer ");
-	}
+
 	
 
 		

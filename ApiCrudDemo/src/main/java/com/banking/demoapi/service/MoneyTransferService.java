@@ -33,6 +33,7 @@ public class MoneyTransferService {
 		
 		Account toAccount = accountService.getAccountStatement(transferRequest.getToAccount());
 		
+		validateAccountBalance(fromAccount,transferRequest.getTransactionAmount());
 		
 		TransferEntity transferEntity = transferService.createTransfer(transferRequest.getFromAccount(), 
 				transferRequest.getToAccount(), transferRequest.getTransactionAmount(), transferRequest.getTransferRequestId());
@@ -66,6 +67,11 @@ public class MoneyTransferService {
 	  {
 		  
 	  }
+	}
+	
+	private void validateAccountBalance(Account fromAccount, BigDecimal transactionAmount) throws NotEnoughBalanceException {
+		if(fromAccount.getCurrentBalance().compareTo(transactionAmount) < 0)
+		 throw new NotEnoughBalanceException("Not Enough Balance in account to Transfer ");
 	}
 
 
