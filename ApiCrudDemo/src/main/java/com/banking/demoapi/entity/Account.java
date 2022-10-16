@@ -1,6 +1,7 @@
 package com.banking.demoapi.entity;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,8 +19,7 @@ public class Account {
 	
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long accountId;
+    private UUID accountId;
 	
 
 	@NonNull
@@ -29,11 +29,11 @@ public class Account {
     BigDecimal currentBalance;
 
   
-	public Long getAccountId() {
+	public UUID getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(Long accountId) {
+	public void setAccountId(UUID accountId) {
 		this.accountId = accountId;
 	}
 

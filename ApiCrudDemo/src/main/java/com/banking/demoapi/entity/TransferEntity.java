@@ -2,6 +2,7 @@ package com.banking.demoapi.entity;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,8 +20,7 @@ import org.springframework.lang.NonNull;
 public class TransferEntity {
 		
 	@Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long transactionId;
+    private UUID transactionId;
 	
 	@NonNull
 	private String fromAccount;
@@ -38,11 +38,11 @@ public class TransferEntity {
     @Column(name="transaction_Date_Time")
     private Date transactionDateTime;
 
-    public Long getTransactionId() {
+    public UUID getTransactionId() {
 		return transactionId;
 	}
 
-	public void setTransactionId(Long transactionId) {
+	public void setTransactionId(UUID transactionId) {
 		this.transactionId = transactionId;
 	}
 
