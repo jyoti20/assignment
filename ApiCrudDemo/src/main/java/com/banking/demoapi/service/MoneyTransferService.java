@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.banking.demoapi.entity.Account;
 import com.banking.demoapi.entity.TransferEntity;
 import com.banking.demoapi.model.TransferRequest;
+import com.banking.demoapi.validationexception.NotEnoughBalanceException;
 
 @Service
 public class MoneyTransferService {
@@ -18,16 +20,18 @@ public class MoneyTransferService {
 	@Autowired 
 	TransferService  transferService;
 	
-	//@Transactional
+	/**ProcessTransaction for given transferRequest
+	* Update appropriate balances 
+	* Create Transfer statement 
+	*/
+	@Transactional
 	public boolean processTransaction(TransferRequest transferRequest)
 	{
 	 try
 	 {
-		 Account fromAccount = accountService.getAccountByAccountNumber(transferRequest.getFromAccount());
+		 Account fromAccount = accountService.getAccountStatement(transferRequest.getFromAccount());
 		
-		Account toAccount = accountService.getAccountByAccountNumber(transferRequest.getToAccount());
-		
-		validateAccountBalance(fromAccount,transferRequest.getTransactionAmount());
+		Account toAccount = accountService.getAccountStatement(transferRequest.getToAccount());
 		
 		
 		TransferEntity transferEntity = transferService.createTransfer(transferRequest.getFromAccount(), 
@@ -46,13 +50,17 @@ public class MoneyTransferService {
 		
 	}
 
+	/**doTransfer given transactionAmount from source:fromAccount to the distination:toAccount
+	* Update appropriate balances 
+	* Create Transfer statement 
+	*/
 	private void doTransfer(Account fromAccount, Account toAccount, BigDecimal transactionAmount) {
 		
 	  try
 	  {
-		  toAccount = accountService.updateBalance(toAccount, toAccount.getCurrentBalance().add(transactionAmount));
+		   accountService.updateBalance(toAccount, toAccount.getCurrentBalance().add(transactionAmount));
 		
-		  fromAccount = accountService.updateBalance(fromAccount, fromAccount.getCurrentBalance().subtract(transactionAmount));
+		   accountService.updateBalance(fromAccount, fromAccount.getCurrentBalance().subtract(transactionAmount));
 	   }
 	  catch(Exception e)
 	  {
@@ -60,8 +68,5 @@ public class MoneyTransferService {
 	  }
 	}
 
-	private void validateAccountBalance(Account fromAccount, BigDecimal transactionAmount) throws NotEnoughBalanceException {
-		if(fromAccount.getCurrentBalance().compareTo(transactionAmount) < 0)
-		 throw new NotEnoughBalanceException("Not Enough Balance in account to Transfer ");
-	}
+
 }

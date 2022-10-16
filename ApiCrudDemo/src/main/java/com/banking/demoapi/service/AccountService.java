@@ -16,7 +16,10 @@ public class AccountService {
 	@Autowired
 	AccountRepository accountRepo;
 	
-	public Account getAccountByAccountNumber(String accountNumber)
+	/**AccountStatement
+	* Get Account Details for a given account number
+	*/
+	public Account getAccountStatement(String accountNumber)
 	{
 		Optional<Account> account = accountRepo.findByAccountNumberEquals(accountNumber);
 		
@@ -27,12 +30,25 @@ public class AccountService {
 			return null;
 	}
 
-	public Account updateBalance(Account account, BigDecimal updatedBalance) {
+	/**UpdateBalance
+	* Update given balance for the provided account
+	*/
+	public Account updateBalance(Account account, BigDecimal newBalance) {
 		
-		account.setCurrentBalance(updatedBalance);
+		account.setCurrentBalance(newBalance);
 		return accountRepo.save(account);
 		
 	}
+
+	/**save
+	* Persist provided account
+	*/
+	public Account save(Account account1) {
+
+		return accountRepo.save(account1);
+	}
+
+	
 
 
 }

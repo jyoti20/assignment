@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.lang.NonNull;
 
 
 @Table(name="Transfer_Track")
@@ -21,12 +22,16 @@ public class TransferEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long transactionId;
 	
+	@NonNull
 	private String fromAccount;
 	
+	@NonNull
 	private String toAccount;
 	
+	@NonNull
 	private String transferRequestId;
 
+	@NonNull
     private BigDecimal transactionAmount;
 
     @CreationTimestamp

@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.lang.NonNull;
+
 
 
 @Table(name="account")
@@ -20,11 +22,14 @@ public class Account {
     private Long accountId;
 	
 
+	@NonNull
 	String accountNumber;
 
+	@NonNull
     BigDecimal currentBalance;
 
-    public Long getAccountId() {
+  
+	public Long getAccountId() {
 		return accountId;
 	}
 

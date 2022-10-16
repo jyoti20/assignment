@@ -2,6 +2,9 @@ package com.banking.demoapi.model;
 
 import java.math.BigDecimal;
 
+import lombok.Data;
+
+@Data
 public class TransferRequest {
 	
 	private String fromAccount;

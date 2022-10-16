@@ -1,10 +1,12 @@
 package com.banking.demoapi.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.banking.demoapi.entity.Account;
-import com.banking.demoapi.entity.TransferEntity;
 import com.banking.demoapi.model.TransferRequest;
 import com.banking.demoapi.repository.AccountRepository;
 import com.banking.demoapi.service.AccountService;
 import com.banking.demoapi.service.MoneyTransferService;
-import com.banking.demoapi.service.NotEnoughBalanceException;
+import com.banking.demoapi.validationexception.NegativeBalanceException;
+import com.banking.demoapi.validationexception.NotEnoughBalanceException;
 
 @RestController
 public class AccountController {
@@ -31,10 +33,14 @@ public class AccountController {
 	@Autowired
 	MoneyTransferService  moneyTransferService;
 	
+	/**
+	 * getAccountDetails
+	* Get Account Details for a given account number
+	*/
 	@GetMapping("/getAccount/{accountNumber}")
 	public ResponseEntity<Account> getAccountDetails(@PathVariable String accountNumber)
 	{
-		Account account =  accService.getAccountByAccountNumber(accountNumber);
+		Account account =  accService.getAccountStatement(accountNumber);
 		try {
 			if(null != account)
 			{
@@ -49,7 +55,11 @@ public class AccountController {
 		}	
 	}
 	
-	
+	/**
+	 * InitiateAmountTranser given transactionAmount from source:fromAccount to the distination:toAccount
+	* Update appropriate balances 
+	* Create Transfer statement 
+	*/
 	@PostMapping("/initiateAmountTranser")
 	public ResponseEntity<String> initiateAmountTransfer(@RequestBody TransferRequest transferRequest)
 	{
@@ -57,11 +67,17 @@ public class AccountController {
 	   try {
 		   try {
 		
+			   Account fromAccount = accService.getAccountStatement(transferRequest.getFromAccount());
+			   validateAccountBalance(fromAccount,transferRequest.getTransactionAmount());
 		       status = moneyTransferService.processTransaction(transferRequest);
 		       String msg = "";
 			   if(status)
+			   {
 			     msg = "transaction successful : response " + status;
-			   return  new ResponseEntity<String>(msg,HttpStatus.OK);
+			     	return  new ResponseEntity<String>(msg,HttpStatus.OK);
+			   }
+			   else
+				   return  new ResponseEntity<String>(msg,HttpStatus.EXPECTATION_FAILED);
 		   }
 		   catch(Exception e)
 		   {
@@ -84,7 +100,7 @@ public class AccountController {
 	public ResponseEntity<Account> save(@RequestBody Account account)
 	{
 		try {
-			return new ResponseEntity<>(accountRepo.save(account), HttpStatus.CREATED);
+			return new ResponseEntity<>(accService.save(account), HttpStatus.CREATED);
 		}
 		catch(Exception e)
 		{
@@ -112,6 +128,14 @@ public class AccountController {
 		}
 		
 		
+	}
+	
+	private void validateAccountBalance(Account fromAccount, BigDecimal transactionAmount) throws NotEnoughBalanceException, NegativeBalanceException {
+		if(fromAccount.getCurrentBalance().compareTo(transactionAmount) < 0)
+		 throw new NotEnoughBalanceException("Not Enough Balance in account to Transfer ");
+		
+		if (transactionAmount.compareTo(BigDecimal.ZERO) > 0)
+			 throw new NegativeBalanceException("Not Enough Balance in account to Transfer ");
 	}
 	
 
