@@ -1,6 +1,7 @@
 package com.banking.demoapi.service;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class TransferService {
 		transferEntity.setTransactionAmount(transactionAmount);
 		transferEntity.setTransferRequestId(transferRequestId);
 		
+		UUID uuid=UUID.randomUUID(); 
+		transferEntity.setTransactionId(uuid);
 		transferEntity = transferRepo.save(transferEntity);
 		return transferEntity;
 		

@@ -4,11 +4,8 @@ import java.math.BigDecimal;
 
 import org.springframework.lang.NonNull;
 
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+
 public class AccountDTO {
 	
 	@NonNull

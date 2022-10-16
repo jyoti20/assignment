@@ -1,7 +1,9 @@
 package com.banking.demoapi.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,8 +46,13 @@ public class AccountService {
 	* Persist provided account
 	*/
 	public Account save(Account account1) {
-
+		UUID uuid=UUID.randomUUID(); 
+		account1.setAccountId(uuid);
 		return accountRepo.save(account1);
+	}
+
+	public List<Account> findAll() {
+		return accountRepo.findAll();
 	}
 
 	

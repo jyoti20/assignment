@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.banking.demoapi.entity.Account;
 import com.banking.demoapi.entity.TransferEntity;
 import com.banking.demoapi.model.TransferRequest;
+import com.banking.demoapi.validationexception.NegativeBalanceException;
 import com.banking.demoapi.validationexception.NotEnoughBalanceException;
 
 @Service
@@ -69,9 +70,12 @@ public class MoneyTransferService {
 	  }
 	}
 	
-	private void validateAccountBalance(Account fromAccount, BigDecimal transactionAmount) throws NotEnoughBalanceException {
+	private void validateAccountBalance(Account fromAccount, BigDecimal transactionAmount) throws NotEnoughBalanceException,NegativeBalanceException {
 		if(fromAccount.getCurrentBalance().compareTo(transactionAmount) < 0)
 		 throw new NotEnoughBalanceException("Not Enough Balance in account to Transfer ");
+		
+		if(transactionAmount.compareTo(BigDecimal.ZERO) > 0)
+			 throw new NegativeBalanceException("Negative Balance : Invalid Amount ");
 	}
 
 
